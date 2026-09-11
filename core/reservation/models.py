@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 from .validators import validate_iranian_cellphone_number
 # Create your models here.
@@ -9,7 +10,7 @@ class ReservationModel(models.Model):
     last_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15 ,validators=[validate_iranian_cellphone_number])
     subject = models.CharField(max_length=1000)
-    reservation_config = models.ForeignKey("ReservationConfigModel", on_delete=models.PROTECT)
+    reservation_config = models.ForeignKey("ReservationConfigModel", on_delete=models.CASCADE)
     class ReservationStatusModel(models.TextChoices):
         PENDING = "pending", "Pending"
         COMPLETED = "completed", "Completed"
@@ -25,6 +26,7 @@ class ReservationModel(models.Model):
 
 class ReservationConfigModel(models.Model):
     day_of_week = models.CharField(max_length=100, null=True, blank=True)
+    reserved_by = models.ManyToManyField(User, related_name="user_reserve", blank=True)
     max_limit_reserve = models.PositiveIntegerField(default=0)
     expired_date = models.DateTimeField(default=timezone.now)
 
