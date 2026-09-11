@@ -10,5 +10,17 @@ services:
       - ./core/.env 
     ports:
       - 8000:8000
+    depends_on:
+      - db
       
-  
+  db:
+    image: postgres:17
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: always
+    env_file:
+      - ./core/.env
+
+volumes:
+  postgres_data:
