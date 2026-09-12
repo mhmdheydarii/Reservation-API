@@ -20,7 +20,7 @@ class ReservationConfigListView(APIView):
         for reservation in reservations:
             if (
                 reservation.expired_date > timezone.now()
-                and reservation.reserved_by.count() <= reservation.max_limit_reserve
+                and reservation.reserved_by.count() < reservation.max_limit_reserve
             ):
                 available_reservation_configs.append(reservation)
 
