@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.utils import timezone
-from .validators import validate_iranian_cellphone_number
+from accounts.validators import validate_iranian_cellphone_number
 # Create your models here.
 
 

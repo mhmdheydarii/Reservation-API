@@ -32,6 +32,7 @@ class ReservationConfigListView(APIView):
 
 
 class ReservationCreateView(APIView):
+
     def post(self, request, pk):
         reservation_config = get_object_or_404(ReservationConfigModel, id=pk)
 
