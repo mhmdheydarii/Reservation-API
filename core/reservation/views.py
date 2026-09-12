@@ -40,4 +40,4 @@ class ReservationCreateView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(reservation_config=reservation_config)
 
-        return Response("data : Rezerved Successfully")
+        return Response({"data":"Rezerved Successfully"})
