@@ -82,6 +82,23 @@ class Profile(models.Model):
         return self.user.email
 
 
+
+class OtpTokenModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="otp_tokens")
+    otp = models.CharField(max_length=255)
+    is_verified = models.BooleanField(default=False)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    expired_date = models.DateTimeField()
+
+    def __str__(self):
+        return self.otp
+
+    class Meta:
+        ordering = ["-created_date"]
+
+
+
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:

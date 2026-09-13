@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core import exceptions
 from .models import User, Profile
 
 
@@ -17,7 +18,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         try:
             validate_password(attrs.get("password"))
         except serializers.ValidationError as e:
-            raise serializers.ValidationError({"message":[e.message]})
+            raise serializers.ValidationError({"data":[e.message]})
         return attrs
 
     def create(self, validated_data):
@@ -35,3 +36,45 @@ class LoginSerializer(TokenObtainPairSerializer):
         validated_data = super().validate(attrs)
         validated_data["email"] = self.user.email
         return validated_data
+    
+
+class ChangePasswordSerializer(serializers.Serializer):
+
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs["new_password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({"data":"Password didn`t match"})
+        try:
+            validate_password(attrs.get("new_password"))
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({"data":[e.messages]})
+        return super().validate(attrs)
+
+
+class PasswordResetSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+
+
+class PasswordResetVerifySerializer(serializers.Serializer):
+
+    otp_code = serializers.CharField()
+
+
+class PasswordResetCompleteSerializer(serializers.Serializer):
+
+    new_password = serializers.CharField()
+    new_password2 = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs["new_password"] != attrs["new_password2"]:
+            raise serializers.ValidationError({"data":"Password didn`t match"})
+        try:
+            validate_password(attrs.get("new_password"))
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({"data":[e.messages]})
+            
+        return super().validate(attrs)
