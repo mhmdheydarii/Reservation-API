@@ -27,5 +27,14 @@ services:
     container_name: redis-cache
     restart: unless-stopped
 
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - ./core:/app
+    depends_on:
+      - backend    
+
 volumes:
   postgres_data:
