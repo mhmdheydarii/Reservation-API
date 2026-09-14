@@ -6,6 +6,7 @@ from accounts.validators import validate_iranian_cellphone_number
 
 
 class ReservationModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15 ,validators=[validate_iranian_cellphone_number])
@@ -26,7 +27,6 @@ class ReservationModel(models.Model):
 
 class ReservationConfigModel(models.Model):
     day_of_week = models.CharField(max_length=100, null=True, blank=True)
-    reserved_by = models.ManyToManyField(User, related_name="user_reserve", blank=True)
     max_limit_reserve = models.PositiveIntegerField(default=0)
     expired_date = models.DateTimeField(default=timezone.now)
 

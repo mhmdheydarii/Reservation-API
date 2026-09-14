@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 from .models import ReservationConfigModel, ReservationModel
 from .serializers import ReservetionConfigSerializer, ReservationSerializer
@@ -33,11 +34,17 @@ class ReservationConfigListView(APIView):
 
 class ReservationCreateView(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
         reservation_config = get_object_or_404(ReservationConfigModel, id=pk)
 
-        serializer = ReservationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(reservation_config=reservation_config)
+        if not ReservationModel.objects.filter(user=request.user, reservation_config=reservation_config).exists():
 
-        return Response({"data":"Rezerved Successfully"})
+            serializer = ReservationSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(reservation_config=reservation_config, user=request.user)
+
+            return Response({"data":"Rezerved Successfully"}, status=status.HTTP_200_OK)
+
+        return Response({"data":"This was reserved from you"}, status=status.HTTP_400_BAD_REQUEST)
