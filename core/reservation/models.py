@@ -11,7 +11,7 @@ class ReservationModel(models.Model):
     last_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15 ,validators=[validate_iranian_cellphone_number])
     subject = models.CharField(max_length=1000)
-    reservation_config = models.ForeignKey("ReservationConfigModel", on_delete=models.CASCADE)
+    reservation_config = models.ForeignKey("ReservationConfigModel", on_delete=models.CASCADE, related_name="reservations")
     class ReservationStatusModel(models.TextChoices):
         PENDING = "pending", "Pending"
         COMPLETED = "completed", "Completed"
